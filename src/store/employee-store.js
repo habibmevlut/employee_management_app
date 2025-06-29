@@ -11,6 +11,7 @@ export const SET_VIEW_MODE = 'SET_VIEW_MODE';
 export const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE';
 export const SET_SEARCH_TERM = 'SET_SEARCH_TERM';
 export const SET_LANGUAGE = 'SET_LANGUAGE';
+export const RESET_STORE = 'RESET_STORE';
 
 // Action Creators
 export const addEmployee = (employee) => ({
@@ -46,6 +47,10 @@ export const setSearchTerm = (term) => ({
 export const setLanguage = (lang) => ({
   type: SET_LANGUAGE,
   payload: lang
+});
+
+export const resetStore = () => ({
+  type: RESET_STORE
 });
 
 // Initial State
@@ -105,6 +110,9 @@ function employeeReducer(state = initialState, action) {
         ...state,
         language: action.payload
       };
+    
+    case RESET_STORE:
+      return initialState;
     
     default:
       return state;

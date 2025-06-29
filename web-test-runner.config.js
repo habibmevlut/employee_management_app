@@ -55,7 +55,7 @@ const browsers = {
   // ===========
   chromium: playwrightLauncher({product: 'chromium'}),
   firefox: playwrightLauncher({product: 'firefox'}),
-  webkit: playwrightLauncher({product: 'webkit'}),
+  // webkit: playwrightLauncher({product: 'webkit'}), // Disabled due to system compatibility issues
 
   // Uncomment example launchers for running on Sauce Labs
   // ===========

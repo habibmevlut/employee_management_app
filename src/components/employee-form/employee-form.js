@@ -139,9 +139,13 @@ export class EmployeeForm extends connect(store)(LitElement) {
 
   stateChanged(state) {
     this.language = state.language;
-    if (this.isEdit && !this.employee.id) {
+    this.isEdit = window.location.pathname.includes('/edit/');
+    if (this.isEdit) {
       const id = window.location.pathname.split('/').pop();
-      this.employee = state.employees.find(emp => emp.id === id) || this.employee;
+      const found = state.employees.find(emp => emp.id === id);
+      if (found && found.id !== this.employee.id) {
+        this.employee = { ...found };
+      }
     }
   }
 

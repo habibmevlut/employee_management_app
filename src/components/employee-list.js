@@ -44,16 +44,27 @@ export class EmployeeList extends connect(store)(LitElement) {
   render() {
     return html`
       <div class="employee-container">
-        <div class="header">
-          <div class="logo">
-            <img src="../assets/logo.svg" alt="ING Logo" />
-            <span>ING</span>
+        <div class="employee-header-bar">
+          <div class="employee-header-left">
+            <img src="../assets/logo.svg" alt="ING Logo" class="ing-logo" />
+            <span class="ing-text">ING</span>
           </div>
-          <div class="header-actions">
-            <span>Employees</span>
-            <button class="add-new" @click=${this._handleAddNew}>
+          <div class="employee-header-right">
+            <span class="employee-users">
+              <span class="user-icon"> 
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="#FF6B00"/></svg>
+              </span>
+              Employees
+            </span>
+            <button class="add-new">
+              <span class="plus-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="#FF6B00"/></svg>
+              </span>
               Add New
             </button>
+            <span class="lang-flag">
+              <img src="https://flagcdn.com/w20/tr.png" alt="TR" width="20" height="14" />
+            </span>
           </div>
         </div>
 
@@ -63,13 +74,24 @@ export class EmployeeList extends connect(store)(LitElement) {
             <div class="view-toggle">
               <button 
                 class="${this.viewMode === 'table' ? 'active' : ''}"
-                @click=${() => this._handleViewModeChange('table')}>
-                Table View
+                @click=${() => this._handleViewModeChange('table')}
+                title="Table View">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" fill="${this.viewMode === 'table' ? '#FF6B00' : '#D3D3D3'}"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" fill="${this.viewMode === 'table' ? '#FF6B00' : '#D3D3D3'}"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" fill="${this.viewMode === 'table' ? '#FF6B00' : '#D3D3D3'}"/>
+                  <rect x="14" y="14" width="7" height="7" rx="1.5" fill="${this.viewMode === 'table' ? '#FF6B00' : '#D3D3D3'}"/>
+                </svg>
               </button>
               <button 
                 class="${this.viewMode === 'list' ? 'active' : ''}"
-                @click=${() => this._handleViewModeChange('list')}>
-                List View
+                @click=${() => this._handleViewModeChange('list')}
+                title="List View">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <rect x="4" y="5" width="16" height="3" rx="1.5" fill="${this.viewMode === 'list' ? '#FF6B00' : '#D3D3D3'}"/>
+                  <rect x="4" y="10.5" width="16" height="3" rx="1.5" fill="${this.viewMode === 'list' ? '#FF6B00' : '#D3D3D3'}"/>
+                  <rect x="4" y="16" width="16" height="3" rx="1.5" fill="${this.viewMode === 'list' ? '#FF6B00' : '#D3D3D3'}"/>
+                </svg>
               </button>
             </div>
           </div>
@@ -107,8 +129,10 @@ export class EmployeeList extends connect(store)(LitElement) {
                   <td>${employee.position}</td>
                   <td class="actions">
                     <button class="edit-btn" @click=${() => this._handleEdit(employee)} title="Edit">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="#FF6B00"/></svg>
                     </button>
                     <button class="delete-btn" @click=${() => this._handleDelete(employee.id)} title="Delete">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="#FF6B00"/></svg>
                     </button>
                   </td>
                 </tr>
@@ -133,6 +157,14 @@ export class EmployeeList extends connect(store)(LitElement) {
   _renderPagination() {
     const totalPages = Math.ceil(this.employees.length / this.itemsPerPage);
     const pages = [];
+    const isFirst = this.currentPage === 1;
+    const isLast = this.currentPage === totalPages || totalPages === 0;
+
+    pages.push(html`
+      <button class="page-btn" ?disabled=${isFirst} @click=${() => !isFirst && this._handlePageChange(this.currentPage - 1)} title="Previous">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="${isFirst ? '#ccc' : '#FF6B00'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    `);
 
     for (let i = 1; i <= totalPages; i++) {
       pages.push(html`
@@ -143,6 +175,12 @@ export class EmployeeList extends connect(store)(LitElement) {
         </button>
       `);
     }
+
+    pages.push(html`
+      <button class="page-btn" ?disabled=${isLast} @click=${() => !isLast && this._handlePageChange(this.currentPage + 1)} title="Next">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="${isLast ? '#ccc' : '#FF6B00'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    `);
 
     return pages;
   }
