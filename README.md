@@ -86,7 +86,7 @@ employee_management_app/
 
 3. **Start development server**
    ```bash
-   npm run dev
+   npm run serve
    ```
 
 4. **Open your browser**
@@ -171,6 +171,23 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **LitElement Team**: For the amazing web component library
 - **Open Web Components**: For testing utilities and best practices
 - **Case Study Requirements**: For providing comprehensive requirements
+
+## Application Screenshots
+
+### List View
+![List View](src/assets/screenshots/list-view.png)
+
+### Card View
+![Card View](src/assets/screenshots/card-view.png)
+
+### Add New Employee
+![Add New Employee](src/assets/screenshots/add-employee.png)
+
+### Edit Employee
+![Edit Employee](src/assets/screenshots/edit-employee.png)
+
+### Unit Tests Coverage Results
+![Unit Tests Coverage](src/assets/screenshots/test-coverage.png)
 
 ---
 
