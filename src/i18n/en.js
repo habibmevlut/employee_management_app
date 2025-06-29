@@ -42,5 +42,9 @@ export default {
   navigation: {
     employees: 'Employees',
     addNew: 'Add New'
+  },
+  toast: {
+    employeeAdded: "Employee added successfully!",
+    employeeUpdated: "Employee updated successfully!"
   }
 }; 

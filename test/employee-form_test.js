@@ -232,4 +232,80 @@ suite('EmployeeForm', () => {
       expect(element).to.exist;
     }
   });
+
+  test('should show validation error for empty form', async () => {
+    const form = element.shadowRoot.querySelector('form');
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await element.updateComplete;
+    const errorMessages = element.shadowRoot.querySelectorAll('.error');
+    expect(errorMessages.length).to.be.greaterThan(0);
+  });
+
+  test('should update employee and clear error on input', async () => {
+    element.errors = { firstName: 'error' };
+    const input = element.shadowRoot.querySelector('input[name="firstName"]');
+    input.value = 'Ali';
+    input.dispatchEvent(new Event('input'));
+    await element.updateComplete;
+    expect(element.employee.firstName).to.equal('Ali');
+    expect(element.errors.firstName).to.equal('');
+  });
+
+  test('should show confirm dialog on valid submit', async () => {
+    const fields = {
+      firstName: 'Ali',
+      lastName: 'Veli',
+      dateOfEmployment: '2022-01-01',
+      dateOfBirth: '1990-01-01',
+      phone: '+90 555 123 45 67',
+      email: 'ali.veli@gmail.com'
+    };
+    for (const [name, value] of Object.entries(fields)) {
+      const input = element.shadowRoot.querySelector(`[name="${name}"]`);
+      if (input) {
+        input.value = value;
+        input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      }
+    }
+    // Select için ayrıca change event
+    const departmentSelect = element.shadowRoot.querySelector('select[name="department"]');
+    if (departmentSelect) {
+      departmentSelect.value = 'IT';
+      departmentSelect.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    }
+    const positionSelect = element.shadowRoot.querySelector('select[name="position"]');
+    if (positionSelect) {
+      positionSelect.value = 'Software Developer';
+      positionSelect.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    }
+    await element.updateComplete;
+    // Bir tick daha bekle
+    await new window.Promise(function(resolve){ setTimeout(resolve, 0); });
+    const form = element.shadowRoot.querySelector('form');
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await element.updateComplete;
+    expect(element.showConfirm).to.be.true;
+  });
+
+  test('should set employee in edit mode via onBeforeEnter', async () => {
+    const emp = {
+      id: 'testid',
+      firstName: 'Ali',
+      lastName: 'Veli',
+      dateOfEmployment: '2022-01-01',
+      dateOfBirth: '1990-01-01',
+      phone: '+90 555 123 45 67',
+      email: 'ali.veli@gmail.com',
+      department: 'IT',
+      position: 'Software Developer'
+    };
+    store.dispatch(addEmployee(emp));
+    // Store güncellemesini bekle
+    await new window.Promise(function(resolve){ setTimeout(resolve, 10); });
+    const el = await fixture(html`<employee-form></employee-form>`);
+    el.onBeforeEnter({ params: { id: 'testid' } });
+    await el.updateComplete;
+    expect(el.employee.firstName).to.equal('Ali');
+    expect(el.isEdit).to.be.true;
+  });
 }); 

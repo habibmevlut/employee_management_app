@@ -6,6 +6,9 @@ package-lock.json
 dist/
 build/
 
+# Test coverage
+coverage/
+
 # IDE and editor files
 .vscode/
 .idea/

@@ -104,6 +104,10 @@ export class EmployeeList extends connect(store)(LitElement) {
       text-align: center;
       padding: 1.2rem 0.5rem 1.1rem 0.5rem;
       letter-spacing: 0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
     }
 
     tr {
@@ -121,6 +125,10 @@ export class EmployeeList extends connect(store)(LitElement) {
       border-bottom: 1px solid #f0f0f0;
       text-align: center;
       padding: 1.1rem 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 160px;
     }
 
     .list-view {

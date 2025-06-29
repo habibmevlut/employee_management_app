@@ -1,6 +1,6 @@
 import { fixture, html, expect } from '@open-wc/testing';
-import { store, addEmployee, setViewMode, setLanguage, resetStore } from '../../src/store/employee-store.js';
-import '../../src/components/employee-list/employee-list.js';
+import { store, addEmployee, setViewMode, setLanguage, resetStore } from '../src/store/employee-store.js';
+import '../src/components/employee-list/employee-list.js';
 
 suite('EmployeeList', () => {
   let el;
@@ -272,5 +272,14 @@ suite('EmployeeList', () => {
       // Check that selection is maintained
       expect(el.selectedEmployeeIds.length).to.equal(selectedCount);
     }
+  });
+
+  test('should show no results message when search yields nothing', async () => {
+    const searchInput = el.shadowRoot.querySelector('input[type="text"]');
+    searchInput.value = 'asdasdasd';
+    searchInput.dispatchEvent(new Event('input'));
+    await el.updateComplete;
+    const noResults = el.shadowRoot.textContent.includes('No employees found') || el.shadowRoot.textContent.includes('Çalışan bulunamadı');
+    expect(noResults).to.be.true;
   });
 }); 

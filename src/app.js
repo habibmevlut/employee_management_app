@@ -3,6 +3,7 @@ import { Router } from '@vaadin/router';
 import './components/navigation/nav-menu.js';
 import './components/employee-list/employee-list.js';
 import './components/employee-form/employee-form.js';
+import './components/toast-message.js';
 
 export class EmployeeApp extends LitElement {
   static styles = css`

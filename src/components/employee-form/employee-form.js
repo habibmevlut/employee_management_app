@@ -139,22 +139,34 @@ export class EmployeeForm extends connect(store)(LitElement) {
 
   stateChanged(state) {
     this.language = state.language;
-    this.isEdit = window.location.pathname.includes('/edit/');
-    if (this.isEdit) {
-      const id = window.location.pathname.split('/').pop();
+  }
+
+  onBeforeEnter(location) {
+    if (location && location.params && location.params.id) {
+      this.isEdit = true;
+      const id = location.params.id;
+      const state = store.getState();
       const found = state.employees.find(emp => emp.id === id);
-      if (found && found.id !== this.employee.id) {
+      if (found) {
         this.employee = { ...found };
       }
+    } else {
+      this.isEdit = false;
+      this.employee = {
+        firstName: '',
+        lastName: '',
+        dateOfEmployment: '',
+        dateOfBirth: '',
+        phone: '',
+        email: '',
+        department: '',
+        position: ''
+      };
     }
   }
 
   get translations() {
     return this.language === 'tr' ? trTranslations : enTranslations;
-  }
-
-  firstUpdated() {
-    this.isEdit = window.location.pathname.includes('/edit/');
   }
 
   handleInput(e) {
@@ -186,13 +198,21 @@ export class EmployeeForm extends connect(store)(LitElement) {
   }
 
   handleConfirm() {
+    const t = this.translations.toast;
     if (this.isEdit) {
       store.dispatch(updateEmployee(this.employee));
+      this.showToast(t.employeeUpdated, 'success');
     } else {
       store.dispatch(addEmployee(this.employee));
+      this.showToast(t.employeeAdded, 'success');
     }
     window.history.pushState({}, '', '/');
     window.dispatchEvent(new CustomEvent('vaadin-router-go', { detail: { pathname: '/' } }));
+  }
+
+  showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    if (toast) toast.show(message, type);
   }
 
   renderFormField(name, type = 'text') {
@@ -229,14 +249,14 @@ export class EmployeeForm extends connect(store)(LitElement) {
   }
 
   renderConfirmDialog() {
-    const t = this.translations.confirmDialog;
+    const t = this.translations.confirmDialog || {};
     return html`
       <div class="confirm-dialog">
-        <h3>${this.isEdit ? t.updateTitle : t.addTitle}</h3>
-        <p>${this.isEdit ? t.updateMessage : t.addMessage}</p>
+        <h3 style="margin-bottom:0.7rem; color:#ff8800; font-size:1.2rem;">${this.isEdit ? (t.updateTitle || 'Kaydı Güncelle') : (t.addTitle || 'Kaydı Onayla')}</h3>
+        <p style="margin-bottom:1.2rem; color:#444; font-size:1.05rem;">${this.isEdit ? (t.updateMessage || 'Bu çalışan güncellenecek. Devam etmek istiyor musunuz?') : (t.addMessage || 'Bu çalışan kaydedilecek. Devam etmek istiyor musunuz?')}</p>
         <div class="confirm-dialog-buttons">
-          <button @click=${() => this.showConfirm = false}>${t.cancel}</button>
-          <button @click=${this.handleConfirm}>${t.confirm}</button>
+          <button @click=${() => this.showConfirm = false} style="background:#f8f9fa; color:#222; border:1px solid #ddd; border-radius:6px; padding:0.5rem 1.5rem; font-size:1rem;">${t.cancel || 'İptal'}</button>
+          <button @click=${this.handleConfirm} style="background:#ff4400; color:#fff; border:none; border-radius:6px; padding:0.5rem 1.5rem; font-size:1rem; font-weight:500;">${t.confirm || (this.isEdit ? 'Güncelle' : 'Kaydet')}</button>
         </div>
       </div>
     `;

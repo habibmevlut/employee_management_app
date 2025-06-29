@@ -42,5 +42,9 @@ export default {
   navigation: {
     employees: 'Çalışanlar',
     addNew: 'Yeni Ekle'
+  },
+  toast: {
+    employeeAdded: "Çalışan başarıyla eklendi!",
+    employeeUpdated: "Çalışan başarıyla güncellendi!"
   }
 }; 

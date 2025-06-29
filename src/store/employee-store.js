@@ -2,6 +2,7 @@
 window.process = { env: { NODE_ENV: 'development' } };
 
 import { createStore } from 'redux';
+import { generateMockEmployees, isFirstTimeLoad, markAsInitialized } from '../utils/mock-data.js';
 
 // Action Types
 export const ADD_EMPLOYEE = 'ADD_EMPLOYEE';
@@ -12,6 +13,7 @@ export const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE';
 export const SET_SEARCH_TERM = 'SET_SEARCH_TERM';
 export const SET_LANGUAGE = 'SET_LANGUAGE';
 export const RESET_STORE = 'RESET_STORE';
+export const INITIALIZE_WITH_MOCK_DATA = 'INITIALIZE_WITH_MOCK_DATA';
 
 // Action Creators
 export const addEmployee = (employee) => ({
@@ -51,6 +53,11 @@ export const setLanguage = (lang) => ({
 
 export const resetStore = () => ({
   type: RESET_STORE
+});
+
+export const initializeWithMockData = (employees) => ({
+  type: INITIALIZE_WITH_MOCK_DATA,
+  payload: employees
 });
 
 // Initial State
@@ -111,6 +118,12 @@ function employeeReducer(state = initialState, action) {
         language: action.payload
       };
     
+    case INITIALIZE_WITH_MOCK_DATA:
+      return {
+        ...state,
+        employees: action.payload
+      };
+    
     case RESET_STORE:
       return initialState;
     
@@ -127,6 +140,13 @@ export const store = createStore(
     ? JSON.parse(localStorage.getItem('employeeState')) 
     : undefined
 );
+
+// Initialize with mock data on first load
+if (isFirstTimeLoad()) {
+  const mockEmployees = generateMockEmployees(18); // Generate 18 employees
+  store.dispatch(initializeWithMockData(mockEmployees));
+  markAsInitialized();
+}
 
 // Save state changes to localStorage
 store.subscribe(() => {
